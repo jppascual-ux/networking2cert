@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="description" content="Bite-sized, game-style review quiz with instant feedback, streaks and sound effects." />
+  <title>Quiz Reviewer</title>
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='26' fill='%2358CC02'/%3E%3Cpath d='M28 52l15 15 30-32' stroke='white' stroke-width='12' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="app" id="app">
+
+    <!-- ===================================================== -->
+    <!-- START SCREEN                                          -->
+    <!-- ===================================================== -->
+    <section class="screen screen-start is-active" id="screen-start" aria-labelledby="quiz-title">
+      <div class="topbar">
+        <span class="brand-pill">Reviewer</span>
+        <button class="icon-btn sound-toggle" type="button" data-sound-toggle aria-label="Toggle sound" aria-pressed="true">
+          <svg class="ico-sound-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>
+          <svg class="ico-sound-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <div class="start-hero">
+        <!-- Original mascot: a friendly little router -->
+        <svg class="mascot" viewBox="0 0 120 112" aria-hidden="true">
+          <rect x="30" y="12" width="8" height="30" rx="4" fill="#4B4B4B"/>
+          <rect x="82" y="12" width="8" height="30" rx="4" fill="#4B4B4B"/>
+          <circle class="mascot-led" cx="34" cy="12" r="7" fill="#FFC800"/>
+          <circle class="mascot-led mascot-led-2" cx="86" cy="12" r="7" fill="#FFC800"/>
+          <rect x="10" y="40" width="100" height="66" rx="24" fill="#58A700"/>
+          <rect x="10" y="36" width="100" height="64" rx="24" fill="#58CC02"/>
+          <g class="mascot-eyes">
+            <circle cx="42" cy="62" r="12" fill="#fff"/>
+            <circle cx="78" cy="62" r="12" fill="#fff"/>
+            <circle cx="45" cy="63" r="6" fill="#3C3C3C"/>
+            <circle cx="81" cy="63" r="6" fill="#3C3C3C"/>
+            <circle cx="47" cy="60" r="2" fill="#fff"/>
+            <circle cx="83" cy="60" r="2" fill="#fff"/>
+          </g>
+          <path d="M50 81q10 8 20 0" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <circle cx="24" cy="88" r="3" fill="#D7FFB8"/>
+          <circle cx="96" cy="88" r="3" fill="#D7FFB8"/>
+        </svg>
+        <h1 class="start-title" id="quiz-title">Quiz</h1>
+        <p class="start-subtitle" id="quiz-subtitle"></p>
+      </div>
+
+      <div class="start-section">
+        <h2 class="section-label" id="topic-label">Pick a topic</h2>
+        <div class="option-list" id="topic-list" role="radiogroup" aria-labelledby="topic-label"></div>
+      </div>
+
+      <div class="start-section">
+        <h2 class="section-label" id="length-label">Lesson length</h2>
+        <div class="option-row" id="length-list" role="radiogroup" aria-labelledby="length-label"></div>
+      </div>
+
+      <div class="start-section">
+        <h2 class="section-label" id="order-label">Question order</h2>
+        <div class="option-row option-row-2" id="order-list" role="radiogroup" aria-labelledby="order-label"></div>
+      </div>
+
+      <div class="start-footer">
+        <button class="btn btn-primary btn-block" id="btn-start" type="button" data-click-sound>Start lesson</button>
+      </div>
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- QUIZ SCREEN                                           -->
+    <!-- ===================================================== -->
+    <section class="screen screen-quiz" id="screen-quiz" aria-label="Quiz">
+      <header class="quiz-header">
+        <button class="icon-btn" id="btn-quit" type="button" aria-label="Quit lesson" data-click-sound>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+        </button>
+        <div class="progress" id="progress" role="progressbar" aria-label="Lesson progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="streak" id="streak" title="Answer streak" aria-label="Answer streak">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.2 2.5c1 3.3 5.8 5.7 5.8 10.8A6 6 0 0 1 6 13.5c0-2.5 1.3-4.4 2.8-5.6.1 2.1 1 3.4 2.3 3.9-.6-3.1.2-6.4 1.1-9.3z" fill="currentColor"/></svg>
+          <span id="streak-count">0</span>
+        </div>
+        <button class="icon-btn sound-toggle" type="button" data-sound-toggle aria-label="Toggle sound" aria-pressed="true">
+          <svg class="ico-sound-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>
+          <svg class="ico-sound-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>
+        </button>
+      </header>
+
+      <main class="quiz-body" id="quiz-body">
+        <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+        <article class="question-card" id="question-card">
+          <div class="q-meta">
+            <span class="q-tag" id="q-tag"></span>
+            <span class="q-topic" id="q-topic"></span>
+          </div>
+          <h2 class="q-prompt" id="q-prompt"></h2>
+          <button class="q-figure" id="q-figure" type="button" aria-label="Enlarge exhibit" hidden>
+            <img id="q-img" alt="" />
+            <span class="q-figure-hint" aria-hidden="true">Tap to zoom</span>
+          </button>
+          <pre class="q-exhibit" id="q-exhibit" hidden></pre>
+          <p class="q-notice" id="q-notice" hidden></p>
+          <div class="answer-area" id="answer-area" role="group" aria-labelledby="q-prompt"></div>
+        </article>
+
+        <p class="quiz-hint" id="quiz-hint">Tap an answer</p>
+      </main>
+
+      <!-- Check bar for "Choose 2", matching and recall questions -->
+      <div class="checkbar" id="checkbar" hidden>
+        <button class="btn btn-primary btn-block" id="btn-check" type="button">Check</button>
+      </div>
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- RESULT SCREEN                                         -->
+    <!-- ===================================================== -->
+    <section class="screen screen-result" id="screen-result" aria-labelledby="result-title">
+      <div class="result-hero">
+        <svg class="trophy" viewBox="0 0 120 120" aria-hidden="true">
+          <circle cx="60" cy="60" r="56" fill="#FFF5D1"/>
+          <path d="M38 30h44v18a22 22 0 0 1-44 0z" fill="#FFC800"/>
+          <path d="M38 30h44v6H38z" fill="#FFD94D"/>
+          <path d="M38 36H28a10 10 0 0 0 10 16M82 36h10a10 10 0 0 1-10 16" stroke="#E5A800" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <rect x="55" y="68" width="10" height="14" fill="#E5A800"/>
+          <rect x="42" y="82" width="36" height="12" rx="4" fill="#FFC800"/>
+          <rect x="42" y="90" width="36" height="4" rx="2" fill="#E5A800"/>
+          <path d="M53 44l5 5 10-11" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h1 class="result-title" id="result-title">Lesson complete!</h1>
+        <p class="result-message" id="result-message"></p>
+      </div>
+
+      <div class="stats">
+        <div class="stat stat-gold">
+          <span class="stat-label">Score</span>
+          <span class="stat-value" id="stat-score">0/0</span>
+        </div>
+        <div class="stat stat-green">
+          <span class="stat-label">Accuracy</span>
+          <span class="stat-value" id="stat-accuracy">0%</span>
+        </div>
+        <div class="stat stat-orange">
+          <span class="stat-label">Best streak</span>
+          <span class="stat-value" id="stat-streak">0</span>
+        </div>
+      </div>
+
+      <details class="review" id="review">
+        <summary>Review mistakes <span class="review-count" id="review-count">0</span></summary>
+        <ol class="review-list" id="review-list"></ol>
+      </details>
+
+      <div class="result-actions">
+        <button class="btn btn-primary btn-block" id="btn-retry" type="button" data-click-sound>Try again</button>
+        <button class="btn btn-secondary btn-block" id="btn-retry-missed" type="button" data-click-sound>Practice mistakes</button>
+        <button class="btn btn-ghost btn-block" id="btn-home" type="button" data-click-sound>Change topic</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- FEEDBACK DRAWER                                       -->
+  <!-- ===================================================== -->
+  <div class="drawer" id="drawer" aria-hidden="true" aria-live="assertive">
+    <div class="drawer-inner">
+      <div class="drawer-head">
+        <span class="drawer-icon" aria-hidden="true">
+          <svg class="ico-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="ico-cross" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17" stroke="currentColor" stroke-width="3.2" fill="none" stroke-linecap="round"/></svg>
+          <svg class="ico-reveal" viewBox="0 0 24 24"><path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+        </span>
+        <h3 class="drawer-title" id="drawer-title"></h3>
+      </div>
+      <div class="drawer-answer" id="drawer-answer" hidden></div>
+      <p class="drawer-note" id="drawer-note" hidden></p>
+      <p class="drawer-explain" id="drawer-explain" hidden></p>
+      <div class="drawer-actions" id="drawer-actions">
+        <button class="btn btn-block drawer-btn" id="btn-continue" type="button">Continue</button>
+        <button class="btn btn-block btn-missed" id="btn-missed" type="button" hidden>I missed it</button>
+        <button class="btn btn-block btn-primary" id="btn-got" type="button" hidden>I knew it</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- EXHIBIT ZOOM                                          -->
+  <!-- ===================================================== -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Exhibit" hidden>
+    <button class="icon-btn lightbox-close" id="lightbox-close" type="button" aria-label="Close exhibit">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+    </button>
+    <div class="lightbox-scroll" id="lightbox-scroll">
+      <img id="lightbox-img" alt="" />
+    </div>
+    <p class="lightbox-hint">Scroll or pinch to read · tap ✕ to close</p>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- QUIT CONFIRMATION                                     -->
+  <!-- ===================================================== -->
+  <div class="modal" id="modal" hidden>
+    <div class="modal-backdrop" data-modal-close></div>
+    <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <h3 class="modal-title" id="modal-title">Wait, don't go!</h3>
+      <p class="modal-text">You'll lose your progress in this lesson if you quit now.</p>
+      <button class="btn btn-primary btn-block" id="btn-stay" type="button" data-click-sound>Keep learning</button>
+      <button class="btn btn-danger-ghost btn-block" id="btn-end" type="button" data-click-sound>End session</button>
+    </div>
+  </div>
+</body>
+</html>
